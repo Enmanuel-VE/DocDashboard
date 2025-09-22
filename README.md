@@ -31,7 +31,7 @@ Una plataforma web para gestionar profesionales de la salud y hospitales. Permit
 
 ## 🚀 Demo.
 
-[Ver demo en vivo.](https://hospital-manager.vercel.app)
+[Ver demo en vivo.](https://enmanuel-ve.github.io/DocDashboard/)
 
 ## ⚙ Tecnologías usadas.
 
