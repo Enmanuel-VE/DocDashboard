@@ -14,10 +14,17 @@ interface Props {
 	setIsSignUp: Dispatch<SetStateAction<boolean>>;
 	onSubmit: SubmitHandler<FieldValues>;
 	className?: string;
+	submittedSuccessfully: boolean;
 }
 
-const AuthForm = ({ isSignUp, onSubmit, className, setIsSignUp }: Props) => {
-	const { handleSubmit, submittedSuccessfully } = useFormContext();
+const AuthForm = ({
+	isSignUp,
+	onSubmit,
+	className,
+	setIsSignUp,
+	submittedSuccessfully,
+}: Props) => {
+	const { handleSubmit } = useFormContext();
 
 	return (
 		<form

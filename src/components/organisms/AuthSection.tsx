@@ -8,6 +8,7 @@ interface AuthSectionProps {
 	isSignUp: boolean;
 	setIsSignUp: Dispatch<SetStateAction<boolean>>;
 	onSubmit: SubmitHandler<FieldValues>;
+	submittedSuccessfully: boolean;
 }
 
 const AuthSection = (props: AuthSectionProps) => {
@@ -20,6 +21,7 @@ const AuthSection = (props: AuthSectionProps) => {
 			<div className="flex flex-col gap-6 flex-1">
 				<AuthHeader className="flex-1/2" isSignUp={props.isSignUp} />
 				<AuthForm
+					submittedSuccessfully={props.submittedSuccessfully}
 					className="flex-1/2"
 					setIsSignUp={props.setIsSignUp}
 					isSignUp={props.isSignUp}

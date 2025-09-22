@@ -50,6 +50,7 @@ const Auth = () => {
 		<AuthTemplate>
 			<FormProvider {...customFormContext}>
 				<AuthSection
+					submittedSuccessfully={submittedSuccessfully}
 					isSignUp={isSignUp}
 					setIsSignUp={setIsSignUp}
 					onSubmit={onSubmit}
