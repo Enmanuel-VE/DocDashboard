@@ -2,7 +2,11 @@
 <html lang="es">
 	<head>
 		<meta charset="UTF-8" />
-		<link rel="icon" type="image/svg+xml" href="/vite.svg" />
+		<link
+			rel="icon"
+			type="image/svg+xml"
+			href="./assets/images/isotipo.png"
+		/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Cargando...</title>
 	</head>
@@ -12,10 +16,8 @@
 				const pathname = window.location.pathname;
 				const repoName = "/DocDashboard";
 
-				// Obtiene la ruta sin el nombre del repositorio
 				const cleanPath = pathname.substring(repoName.length);
 
-				// Redirige a la URL base con la ruta limpia como parámetro
 				window.location.replace(
 					window.location.protocol +
 						"//" +
