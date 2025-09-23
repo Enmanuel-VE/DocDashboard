@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8" />
+		<link rel="icon" type="image/svg+xml" href="/vite.svg" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Cargando...</title>
+	</head>
+	<body>
+		<script>
+			const redirect = () => {
+				const pathname = window.location.pathname;
+				const repoName = "/DocDashboard";
+
+				const cleanPath = pathname.substring(repoName.length);
+
+				window.location.replace(
+					window.location.protocol +
+						"//" +
+						window.location.host +
+						repoName +
+						"/?p=" +
+						cleanPath
+				);
+			};
+			redirect();
+		</script>
+	</body>
+</html>

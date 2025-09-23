@@ -3,12 +3,12 @@ import "./styles/globals.css";
 import { RouterProvider } from "react-router";
 import { router } from "./routes/AppRoutes";
 import { SessionProvider } from "./context/SessionContext";
-import SessionRedirect from "./components/utils/SessionRedirect";
+import AuxRedirect from "./components/utils/AuxRedirect";
 
 function App() {
 	return (
 		<SessionProvider>
-			<SessionRedirect />
+			<AuxRedirect />
 			<RouterProvider router={router} />
 		</SessionProvider>
 	);

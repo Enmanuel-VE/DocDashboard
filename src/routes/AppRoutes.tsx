@@ -5,7 +5,11 @@ import ProfessionalProfile from "../components/pages/ProfessionalProfile";
 import MyAccount from "../components/pages/MyAccount";
 import Auth from "../components/pages/Auth";
 import NotFound from "../components/pages/NotFound";
-import { createBrowserRouter, type RouteObject } from "react-router";
+import {
+	createBrowserRouter,
+	type DOMRouterOpts,
+	type RouteObject,
+} from "react-router";
 import RoleDashboard from "../components/utils/RoleDashboard";
 
 export const routes: RouteObject[] = [
@@ -36,4 +40,8 @@ export const routes: RouteObject[] = [
 	{ path: "*", element: <NotFound /> },
 ];
 
-export const router = createBrowserRouter(routes);
+const options: DOMRouterOpts = {
+	basename: "/DocDashboard",
+};
+
+export const router = createBrowserRouter(routes, options);

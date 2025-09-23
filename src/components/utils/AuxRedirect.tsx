@@ -1,12 +1,19 @@
 import { useSession } from "../../context/session";
 import { useEffect } from "react";
 import { router } from "../../routes/AppRoutes";
+import { handleGitHubPagesRedirect } from "./handleGitHubPagesRedirect";
 
-const SessionRedirect = () => {
+const AuxRedirect = () => {
 	const { user, loading } = useSession();
 
 	useEffect(() => {
 		if (loading) return;
+
+		const isRedirected = handleGitHubPagesRedirect(router.navigate);
+
+		if (isRedirected) {
+			return;
+		}
 
 		const currentPath = window.location.pathname;
 		const isAuthPath = currentPath === "/auth";
@@ -41,4 +48,4 @@ const SessionRedirect = () => {
 	return null;
 };
 
-export default SessionRedirect;
+export default AuxRedirect;
