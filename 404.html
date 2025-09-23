@@ -10,12 +10,12 @@
 		<div id="root"></div>
 		<script>
 			const aux = () => {
-				const pathname = window.location.pathname;
 				window.location.replace(
 					window.location.protocol +
 						"//" +
 						window.location.host +
-						pathname
+						"/DocDashboard/?p=" +
+						window.location.pathname
 				);
 			};
 
