@@ -1,26 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 	<head>
 		<meta charset="UTF-8" />
 		<link rel="icon" type="image/svg+xml" href="/vite.svg" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>DocBoard</title>
+		<title>Cargando...</title>
 	</head>
 	<body>
-		<div id="root"></div>
 		<script>
-			const aux = () => {
+			const redirect = () => {
+				const pathname = window.location.pathname;
+				const repoName = "/DocDashboard";
+
+				// Obtiene la ruta sin el nombre del repositorio
+				const cleanPath = pathname.substring(repoName.length);
+
+				// Redirige a la URL base con la ruta limpia como parámetro
 				window.location.replace(
 					window.location.protocol +
 						"//" +
 						window.location.host +
-						"/DocDashboard/?p=" +
-						window.location.pathname
+						repoName +
+						"/?p=" +
+						cleanPath
 				);
 			};
-
-			aux();
+			redirect();
 		</script>
-		<script type="module" src="/src/main.tsx"></script>
 	</body>
 </html>
