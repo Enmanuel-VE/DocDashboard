@@ -3,15 +3,15 @@ import "./styles/globals.css";
 import { RouterProvider } from "react-router";
 import { router } from "./routes/AppRoutes";
 import { SessionProvider } from "./context/SessionContext";
-import AuxRedirect from "./components/utils/AuxRedirect";
+import GitHubPagesRedirect from "./components/utils/GitHubPagesRedirect";
 
-function App() {
+const App = () => {
 	return (
 		<SessionProvider>
-			<AuxRedirect />
+			<GitHubPagesRedirect />
 			<RouterProvider router={router} />
 		</SessionProvider>
 	);
-}
+};
 
 export default App;

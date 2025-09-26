@@ -3,9 +3,9 @@ import supabaseClient from "../../lib/supabaseClient";
 import { FaSpinner } from "react-icons/fa";
 
 const StatsSection = () => {
-	const [hospitalCount, setHospitalCount] = useState<number>(0);
-	const [doctorCount, setDoctorCount] = useState<number>(0);
-	const [loading, setLoading] = useState<boolean>(true);
+	const [hospitalCount, setHospitalCount] = useState(0);
+	const [doctorCount, setDoctorCount] = useState(0);
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		async function fetchCounts() {
@@ -34,7 +34,7 @@ const StatsSection = () => {
 
 	if (loading) {
 		return (
-			<div className="flex gap-6">
+			<div className="flex flex-col gap-6 md:flex-row">
 				<div className="flex-1 flex flex-row justify-between bg-white p-6 rounded-xl shadow">
 					<h3 className="text-xl font-semibold">
 						Hospitales totales
@@ -54,7 +54,7 @@ const StatsSection = () => {
 	}
 
 	return (
-		<div className="flex gap-6">
+		<div className="flex flex-col gap-6 md:flex-row">
 			<div className="flex-1 flex flex-row justify-between bg-white p-6 rounded-xl shadow">
 				<h3 className="text-xl font-semibold">Hospitales totales</h3>
 				<p className="text-xl">{hospitalCount}</p>

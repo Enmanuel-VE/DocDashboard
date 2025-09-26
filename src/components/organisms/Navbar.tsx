@@ -33,7 +33,7 @@ const Navbar = (props: Props) => {
 			<div className="flex flex-row-reverse md:flex-row min-h-[10dvh] justify-between px-4 sm:px-6 lg:px-8">
 				<header className="flex-shrink-0 flex items-center">
 					<Link to="/" className="text-2xl font-bold text-rose-500">
-						DocBoard
+						DocDashboard
 					</Link>
 				</header>
 
