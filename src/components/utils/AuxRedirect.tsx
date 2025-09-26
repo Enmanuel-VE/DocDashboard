@@ -9,11 +9,7 @@ const AuxRedirect = () => {
 	useEffect(() => {
 		if (loading) return;
 
-		const isRedirected = handleGitHubPagesRedirect(router.navigate);
-
-		if (isRedirected) {
-			return;
-		}
+		handleGitHubPagesRedirect(router.navigate);
 
 		const currentPath = window.location.pathname;
 		const isAuthPath = currentPath === "/auth";

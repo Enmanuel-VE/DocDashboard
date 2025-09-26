@@ -6,8 +6,7 @@ export const handleGitHubPagesRedirect = (navigate: NavigateFunction) => {
 
 	if (redirectPath) {
 		navigate(redirectPath, { replace: true });
-		return true;
 	}
 
-	return false;
+	return;
 };
