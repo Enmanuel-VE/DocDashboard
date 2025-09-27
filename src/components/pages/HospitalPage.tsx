@@ -1,12 +1,19 @@
-import { useEffect, useState } from "react";
-import supabaseClient from "../../lib/supabaseClient";
-
-import Loading from "../atoms/Loading";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 import HospitalTemplate from "../templates/HospitalTemplate";
 import HospitalTabsSection from "../organisms/HospitalTabsSection";
 
-const tabs = ["Sobre el hospital", "Profesionales", "Preguntas frecuentes"];
+import fetchProfessionalsByHospital from "../utils/api/get/fetchProfessionalsByHospital";
+import fetchHospitalFaqs from "../utils/api/get/fetchHospitalFaqs";
+import fetchHospitalById from "../utils/api/get/fetchHospitalById";
+
+const tabs = [
+	"Sobre el hospital",
+	"Profesionales",
+	"Preguntas frecuentes",
+] as const;
+
+export type Tab = (typeof tabs)[number];
 
 type HospitalDetail = {
 	id: string;
@@ -16,7 +23,7 @@ type HospitalDetail = {
 	zone?: string;
 	phone: string;
 	email: string;
-	map_embed: string;
+	map_embed?: string;
 };
 
 type Doctor = {
@@ -27,90 +34,79 @@ type Doctor = {
 	avatar: string | null;
 };
 
-type PivotRow = {
-	profiles: Doctor[];
+type HospitalPageProps = {
+	hospital?: HospitalDetail | null;
 };
 
-export default function HospitalPage() {
+export default function HospitalPage({
+	hospital: initialHospital,
+}: HospitalPageProps) {
 	const { hospitalId } = useParams() as { hospitalId: string };
-	const [activeTab, setActiveTab] = useState<string>(tabs[0]);
+	const [activeTab, setActiveTab] = useState<Tab>(tabs[0]);
 	const [search, setSearch] = useState<string>("");
-
-	const [hospital, setHospital] = useState<HospitalDetail | null>(null);
+	const [hospital, setHospital] = useState<HospitalDetail | null>(
+		initialHospital ?? null
+	);
 	const [doctors, setDoctors] = useState<Doctor[]>([]);
-	const [loading, setLoading] = useState<boolean>(true);
+	const [loading, setLoading] = useState(!initialHospital);
 	const [faqs, setFaqs] = useState<{ question: string; answer: string }[]>(
 		[]
 	);
 
 	useEffect(() => {
-		async function fetchData() {
-			setLoading(true);
+		setHospital(initialHospital ?? null);
+	}, [initialHospital]);
 
-			const { data: hospitalData, error: hospError } =
-				await supabaseClient
-					.from("hospitals")
-					.select("*")
-					.eq("id", hospitalId)
-					.single();
-
-			if (hospError || !hospitalData) {
-				console.error("Error al cargar hospital:", hospError);
-				setHospital(null);
-				setLoading(false);
-				return;
-			}
-			setHospital(hospitalData);
-
-			const { data: pivotRows, error: pivotError } = await supabaseClient
-				.from("hospital_professionals")
-				.select(
-					"profiles:profiles!hospital_professionals_profile_id_fkey(*)"
-				)
-				.eq("hospital_id", hospitalId);
-
-			if (pivotError) {
-				console.error("Error al cargar profesionales:", pivotError);
-				setDoctors([]);
-			} else {
-				const profs: Doctor[] = (
-					(pivotRows as PivotRow[]) ?? []
-				).flatMap((row) => row.profiles);
-
-				console.log("Fetched professionals:", profs);
-				setDoctors(profs);
-			}
-			setLoading(false);
-		}
-
-		fetchData();
-	}, [hospitalId]);
+	const hasFetched = useRef({
+		[tabs[0]]: !!initialHospital,
+		[tabs[1]]: false,
+		[tabs[2]]: false,
+	});
 
 	useEffect(() => {
-		async function fetchFaqs() {
-			const { data, error } = await supabaseClient
-				.from("hospital_faqs")
-				.select("question, answer")
-				.eq("hospital_id", hospitalId)
-				.order("display_order", { ascending: true });
-			if (error) {
-				setFaqs([]);
-			} else {
-				setFaqs(data ?? []);
-			}
-		}
-		fetchFaqs();
-	}, [hospitalId, setFaqs]);
+		const hospitalIdentifier = hospital?.id ?? hospitalId;
+		if (!hospitalIdentifier || hasFetched.current[activeTab]) return;
 
-	if (loading) {
-		return (
-			<HospitalTemplate>
-				<div className="flex flex-col h-full items-center justify-center">
-					<Loading />
-				</div>
-			</HospitalTemplate>
-		);
-	}
+		const fetchData = async () => {
+			try {
+				setLoading(true);
+				switch (activeTab) {
+					case tabs[0]: {
+						if (!hospital) {
+							const hospitalData = await fetchHospitalById(
+								hospitalIdentifier
+							);
+							setHospital(hospitalData);
+						}
+						break;
+					}
+					case tabs[1]: {
+						const doctorsData = await fetchProfessionalsByHospital(
+							hospitalIdentifier
+						);
+						setDoctors(doctorsData);
+						break;
+					}
+					case tabs[2]: {
+						const faqsData = await fetchHospitalFaqs(
+							hospitalIdentifier
+						);
+						setFaqs(faqsData);
+						break;
+					}
+					default:
+						break;
+				}
+				hasFetched.current[activeTab] = true;
+			} catch (error) {
+				console.error("Error al cargar datos del tab:", error);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchData();
+	}, [hospitalId, activeTab, hospital]);
 
 	if (!hospital) {
 		return (
@@ -130,18 +126,17 @@ export default function HospitalPage() {
 	);
 
 	return (
-		<HospitalTemplate>
-			<HospitalTabsSection
-				hospital={hospital}
-				doctors={doctors}
-				faqs={faqs}
-				activeTab={activeTab}
-				setActiveTab={setActiveTab}
-				search={search}
-				setSearch={setSearch}
-				filteredDoctors={filteredDoctors}
-				tabs={tabs}
-			/>
-		</HospitalTemplate>
+		<HospitalTabsSection
+			hospital={hospital}
+			doctors={doctors}
+			faqs={faqs}
+			activeTab={activeTab}
+			setActiveTab={setActiveTab}
+			search={search}
+			setSearch={setSearch}
+			filteredDoctors={filteredDoctors}
+			tabs={[...tabs]}
+			loading={loading}
+		/>
 	);
 }

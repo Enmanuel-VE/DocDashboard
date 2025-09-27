@@ -13,6 +13,7 @@ import PublicRoute from "./guards/PublicRoute";
 
 import type { RouteObject, DOMRouterOpts } from "react-router";
 import { createBrowserRouter } from "react-router";
+import HospitalTemplate from "../components/templates/HospitalTemplate";
 
 export const routes: RouteObject[] = [
 	{
@@ -25,7 +26,14 @@ export const routes: RouteObject[] = [
 		children: [
 			{ index: true, element: <RoleDashboard /> },
 			{ path: "search", element: <SearchPage /> },
-			{ path: "hospital", element: <HospitalPage /> },
+			{
+				path: "hospital",
+				element: (
+					<HospitalTemplate>
+						<HospitalPage />
+					</HospitalTemplate>
+				),
+			},
 			{
 				path: "hospital/:hospitalId/professional/:professionalId",
 				element: <ProfessionalProfile />,
@@ -40,7 +48,11 @@ export const routes: RouteObject[] = [
 			},
 			{
 				path: "hospital/:hospitalId",
-				element: <HospitalPage />,
+				element: (
+					<HospitalTemplate>
+						<HospitalPage />
+					</HospitalTemplate>
+				),
 			},
 			{ path: "account", element: <MyAccount /> },
 			{ path: "*", element: <NotFound /> },

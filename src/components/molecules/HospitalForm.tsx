@@ -39,11 +39,8 @@ const HospitalForm = (props: Props) => {
 				className="w-full"
 			/>
 
-			<label className="label" htmlFor="bio">
-				Descripción - Puedes usar markdown para potenciar tu
-				presentación.
-			</label>
 			<textarea
+				placeholder="Descripción del hospital"
 				{...register("description", {
 					required: {
 						value: true,
@@ -57,35 +54,36 @@ const HospitalForm = (props: Props) => {
 				id="bio"
 				className="input p-4 min-h-[10dvh] max-h-[25dvh] w-full"
 			/>
-
-			<InputForm
-				name="address"
-				options={{
-					required: {
-						value: true,
-						message: "La dirección del hospital es obligatoria",
-					},
-				}}
-				type="text"
-				Icon={IoMdPin}
-				autoComplete="off"
-				className="w-full"
-				placeholder="Dirección"
-			/>
-			<InputForm
-				name="zone"
-				options={{
-					required: {
-						value: true,
-						message: "La zona del hospital es obligatoria",
-					},
-				}}
-				type="text"
-				Icon={FaMapMarked}
-				autoComplete="off"
-				className="w-full"
-				placeholder="Zona"
-			/>
+			<div className="flex flex-col sm:flex-row gap-4">
+				<InputForm
+					name="address"
+					options={{
+						required: {
+							value: true,
+							message: "La dirección del hospital es obligatoria",
+						},
+					}}
+					type="text"
+					Icon={IoMdPin}
+					autoComplete="off"
+					className="w-full"
+					placeholder="Dirección"
+				/>
+				<InputForm
+					name="zone"
+					options={{
+						required: {
+							value: true,
+							message: "La zona del hospital es obligatoria",
+						},
+					}}
+					type="text"
+					Icon={FaMapMarked}
+					autoComplete="off"
+					className="w-full"
+					placeholder="Zona"
+				/>
+			</div>
 			<InputForm
 				name="phone"
 				options={{

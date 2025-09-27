@@ -5,101 +5,77 @@ import {
 	type SubmitHandler,
 } from "react-hook-form";
 import HospitalForm from "../molecules/HospitalForm";
-import supabaseClient from "../../lib/supabaseClient";
 import type { HospitalDetail } from "../organisms/HospitalTabsSection";
 import { useSession } from "../../context/session";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import HospitalPage from "./HospitalPage";
+import deleteHospital from "../utils/api/delete/deleteHospital";
+import updateHospital from "../utils/api/update/updateHospital";
+import createHospital from "../utils/api/create/createHospital";
+import fetchHospitalByAdmin from "../utils/api/get/fetchHospitalByAdmin";
+
+type HospitalPayload = Omit<HospitalDetail, "id">;
 
 const AdminDashboard = () => {
-	const methods = useForm();
-
+	const methods = useForm<HospitalPayload>();
 	const { user } = useSession();
 	const [hospital, setHospital] = useState<HospitalDetail | null>(null);
 
-	useEffect(() => {
-		if (!user) return;
-		if (user.role !== "admin") return;
+	const hasFetched = useRef<Record<string, boolean>>({});
 
-		const fetchData = async () => {
-			try {
-				const { data: existingHospital, error: fetchError } =
-					await supabaseClient
-						.from("hospitals")
-						.select("*")
-						.eq("admin_id", user.id)
-						.maybeSingle();
+	const loadHospital = useCallback(async () => {
+		if (!user || user.role !== "admin") return;
 
-				if (fetchError && fetchError.code !== "PGRST116") {
-					throw new Error("Error al verificar hospital existente");
-				}
-
-				if (existingHospital) {
-					methods.reset(existingHospital);
-				}
-
-				setHospital(existingHospital);
-			} catch (error) {
-				console.error(error);
-			}
-		};
-
-		fetchData();
+		const existingHospital = await fetchHospitalByAdmin(user.id);
+		if (existingHospital) {
+			methods.reset(existingHospital);
+		}
+		setHospital(existingHospital);
+		hasFetched.current[user.id] = true;
 	}, [user, methods]);
 
-	const onSubmit: SubmitHandler<FieldValues | HospitalDetail> = async (h) => {
+	useEffect(() => {
+		if (!user || user.role !== "admin" || hasFetched.current[user.id])
+			return;
+		loadHospital();
+	}, [user, loadHospital]);
+
+	const onSubmit: SubmitHandler<HospitalDetail | FieldValues> = async (h) => {
+		if (!user || user.role !== "admin") return;
+
+		const formatServices =
+			typeof h.services === "string"
+				? h.services
+						.split(",")
+						.map((s) => s.trim())
+						.filter(Boolean)
+				: h.services;
+
+		const payload: HospitalPayload = {
+			name: h.name,
+			description: h.description,
+			address: h.address,
+			zone: h.zone,
+			phone: h.phone,
+			email: h.email,
+			image: h.image,
+			services: formatServices,
+			specialists: h.specialists,
+		};
+
 		try {
-			if (!user) return;
-			if (user.role !== "admin") return;
-
-			let formatServices: string[] = [];
-
-			if (typeof h.services === "string") {
-				formatServices = h.services
-					.split(",")
-					.map((s) => s.trim())
-					.filter(Boolean);
-			}
-
 			if (hospital) {
-				const { error } = await supabaseClient
-					.from("hospitals")
-					.update([
-						{
-							name: h.name,
-							description: h.description,
-							address: h.address,
-							zone: h.zone,
-							phone: h.phone,
-							email: h.email,
-							image: h.image,
-							services: formatServices,
-							admin_id: user.id,
-						},
-					])
-					.eq("id", hospital.id);
-
-				if (error) throw new Error("No se pudo actualizar el hospital");
-			} else if (!hospital) {
-				const { error } = await supabaseClient
-					.from("hospitals")
-					.insert([
-						{
-							name: h.name,
-							description: h.description,
-							address: h.address,
-							zone: h.zone,
-							phone: h.phone,
-							email: h.email,
-							image: h.image,
-							services: formatServices,
-							admin_id: user.id,
-						},
-					]);
-
-				if (error) throw new Error("No se pudo crear el hospital");
+				await updateHospital(
+					{ ...payload, id: hospital.id },
+					hospital.id,
+					user.id
+				);
+			} else {
+				await createHospital(payload, user.id);
 			}
+			await loadHospital();
 		} catch (error) {
-			console.error("Error submitting hospital data:", error);
+			console.error("Error al guardar hospital:", error);
 		}
 	};
 
@@ -107,12 +83,7 @@ const AdminDashboard = () => {
 		if (!hospital) return;
 
 		try {
-			const { error } = await supabaseClient
-				.from("hospitals")
-				.delete()
-				.eq("id", hospital.id);
-
-			if (error) throw new Error("No se pudo eliminar el hospital");
+			await deleteHospital(hospital.id);
 			setHospital(null);
 			methods.reset({});
 		} catch (error) {
@@ -121,24 +92,29 @@ const AdminDashboard = () => {
 	};
 
 	return (
-		<div className="flex-1 flex flex-col justify-center items-center">
-			<div className="flex flex-col gap-6 max-w-6xl p-4">
-				<header className="flex flex-col w-full items-center">
-					<h1 className="text-3xl font-bold text-rose-500">
-						Panel del hospital
-					</h1>
-					<p>
-						Gestiona la información del hospital desde este panel.
-					</p>
-				</header>
-
-				<FormProvider {...methods}>
-					<HospitalForm
-						handleDelete={handleDelete}
-						hospital={hospital}
-						onSubmit={onSubmit}
-					/>
-				</FormProvider>
+		<div className="flex-1 flex flex-col w-full justify-center items-center">
+			<div className="grid grid-cols-1 xl:grid-cols-2 p-4 gap-3 w-full">
+				<div className="flex flex-col p-4 gap-3">
+					<header className="flex flex-col w-full items-center">
+						<h1 className="text-3xl font-bold text-rose-500">
+							Panel del hospital
+						</h1>
+						<p>
+							Gestiona la información del hospital desde este
+							panel.
+						</p>
+					</header>
+					<FormProvider {...methods}>
+						<HospitalForm
+							handleDelete={handleDelete}
+							hospital={hospital}
+							onSubmit={onSubmit}
+						/>
+					</FormProvider>
+				</div>
+				<div className="flex flex-col p-4 gap-3">
+					<HospitalPage hospital={hospital} />
+				</div>
 			</div>
 		</div>
 	);
