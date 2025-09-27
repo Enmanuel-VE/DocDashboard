@@ -47,13 +47,18 @@ function EditProfileForm(props: Props) {
 					}}
 				/>
 			</div>
+
 			<textarea
-				placeholder="Biografía"
+				placeholder="Biografía - Puedes usar markdown para potenciar tu presentación."
 				className="textarea max-h-[30dvh] w-full"
 				{...register("bio", {
-					maxLength: { value: 500, message: "Máximo 500 caracteres" },
+					maxLength: {
+						value: 2500,
+						message: "Máximo 2500 caracteres",
+					},
 				})}
 			></textarea>
+
 			<InputForm
 				name="email"
 				autoComplete="email"

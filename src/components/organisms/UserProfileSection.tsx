@@ -12,6 +12,7 @@ import {
 } from "react-hook-form";
 import CardHospital from "../molecules/CardHospital";
 import Loading from "../atoms/Loading";
+import Markdown from "react-markdown";
 
 interface Hospital {
 	id: string;
@@ -98,7 +99,7 @@ const UserProfileSection = (props: Props) => {
 	}, [navigate]);
 
 	useEffect(() => {
-		setProfileData(props); // sincroniza si props cambia
+		setProfileData(props);
 	}, [props]);
 
 	useEffect(() => {
@@ -180,9 +181,80 @@ const UserProfileSection = (props: Props) => {
 			</div>
 
 			{profileData.bio && (
-				<div>
-					<h3 className="font-medium text-gray-500">Acerca de mí</h3>
-					<p className="text-sm">{profileData.bio}</p>
+				<div className="flex flex-col gap-4">
+					<h2 className="text-base font-semibold text-gray-600">
+						Acerca de mí
+					</h2>
+					<div className="prose prose-sm max-w-none text-gray-700">
+						<Markdown
+							components={{
+								p: ({ ...props }) => (
+									<p
+										className="mb-4 leading-relaxed text-sm text-gray-700"
+										{...props}
+									/>
+								),
+								h1: ({ ...props }) => (
+									<h1
+										className="text-xl font-bold text-gray-800 mt-6 mb-2 border-b pb-1"
+										{...props}
+									/>
+								),
+								h2: ({ ...props }) => (
+									<h2
+										className="text-lg font-semibold text-gray-800 mt-5 mb-2 border-b pb-1"
+										{...props}
+									/>
+								),
+								h3: ({ ...props }) => (
+									<h3
+										className="text-base font-medium text-gray-700 mt-4 mb-2"
+										{...props}
+									/>
+								),
+								ul: ({ ...props }) => (
+									<ul
+										className="list-disc list-inside mb-4 text-sm text-gray-700"
+										{...props}
+									/>
+								),
+								ol: ({ ...props }) => (
+									<ol
+										className="list-decimal list-inside mb-4 text-sm text-gray-700"
+										{...props}
+									/>
+								),
+								li: ({ ...props }) => (
+									<li
+										className="mb-1 text-sm text-gray-700"
+										{...props}
+									/>
+								),
+								a: ({ ...props }) => (
+									<a
+										className="text-sm text-rose-600 underline hover:text-rose-700 transition-colors"
+										target="_blank"
+										rel="noopener noreferrer"
+										{...props}
+									/>
+								),
+								code: ({ ...props }) => (
+									<code
+										className="bg-gray-100 px-1 py-0.5 rounded text-xs font-mono text-gray-800"
+										{...props}
+									/>
+								),
+								blockquote: ({ ...props }) => (
+									<blockquote
+										className="border-l-4 border-gray-300 pl-4 italic text-gray-600 mb-4"
+										{...props}
+									/>
+								),
+							}}
+						>
+							{profileData.bio}
+						</Markdown>
+					</div>
 				</div>
 			)}
 

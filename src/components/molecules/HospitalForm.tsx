@@ -39,6 +39,10 @@ const HospitalForm = (props: Props) => {
 				className="w-full"
 			/>
 
+			<label className="label" htmlFor="bio">
+				Descripción - Puedes usar markdown para potenciar tu
+				presentación.
+			</label>
 			<textarea
 				{...register("description", {
 					required: {
@@ -46,11 +50,11 @@ const HospitalForm = (props: Props) => {
 						message: "La descripción del hospital es obligatoria",
 					},
 					maxLength: {
-						value: 8000,
-						message: "Máximo 8000 caracteres",
+						value: 4000,
+						message: "Máximo 4000 caracteres",
 					},
 				})}
-				placeholder="Descripción"
+				id="bio"
 				className="input p-4 min-h-[10dvh] max-h-[25dvh] w-full"
 			/>
 

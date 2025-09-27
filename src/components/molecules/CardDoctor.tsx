@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { FaHeart, FaHeartBroken, FaLink } from "react-icons/fa";
 import { FaLinkSlash } from "react-icons/fa6";
 import { useNavigate, useLocation } from "react-router";
@@ -17,38 +17,53 @@ function CardDoctor(props: Props) {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const { user } = useSession();
+
 	const [liked, setLiked] = useState(false);
+	const [isLoading, setIsLoading] = useState(true);
+	const hasFetched = useRef(false);
 
 	useEffect(() => {
-		if (!user || !props.id) return;
+		if (!user || !props.id || hasFetched.current) {
+			setIsLoading(false);
+			return;
+		}
 
 		const checkStatus = async () => {
-			if (user.role === "admin") {
-				const { data: hospital } = await supabaseClient
-					.from("hospitals")
-					.select("id")
-					.eq("admin_id", user.id)
-					.single();
+			try {
+				setIsLoading(true);
 
-				if (!hospital) return;
+				if (user.role === "admin") {
+					const { data: hospital } = await supabaseClient
+						.from("hospitals")
+						.select("id")
+						.eq("admin_id", user.id)
+						.single();
 
-				const { data: existing } = await supabaseClient
-					.from("hospital_professionals")
-					.select("id")
-					.eq("hospital_id", hospital.id)
-					.eq("profile_id", props.id);
+					if (!hospital) return;
 
-				setLiked(!!existing?.length);
-			} else {
-				const { data } = await supabaseClient
-					.from("professional_likes")
-					.select("id")
-					.eq("user_id", user.id)
-					.eq("professional_id", props.id)
-					.limit(1)
-					.maybeSingle();
+					const { data: existing } = await supabaseClient
+						.from("hospital_professionals")
+						.select("id")
+						.eq("hospital_id", hospital.id)
+						.eq("profile_id", props.id);
 
-				setLiked(!!data);
+					setLiked(!!existing?.length);
+				} else {
+					const { data } = await supabaseClient
+						.from("professional_likes")
+						.select("id")
+						.eq("user_id", user.id)
+						.eq("professional_id", props.id)
+						.limit(1)
+						.maybeSingle();
+
+					setLiked(!!data);
+				}
+			} catch (error) {
+				console.error(error);
+			} finally {
+				setIsLoading(false);
+				hasFetched.current = true;
 			}
 		};
 
@@ -176,12 +191,15 @@ function CardDoctor(props: Props) {
 					onClick={
 						user?.role === "admin" ? handleLinkHospital : toggleLike
 					}
-					className={`rounded-md cursor-pointer px-4 bg-[#F3F4F6] ${
+					className={`rounded-md cursor-pointer px-4 bg-[#F3F4F6] flex items-center justify-center ${
 						liked ? "text-gray-600" : "text-rose-500"
 					}`}
 					type="button"
+					disabled={isLoading}
 				>
-					{user?.role === "admin" ? (
+					{isLoading ? (
+						<span className="animate-spin w-4 h-4 border-2 border-t-transparent border-rose-500 rounded-full" />
+					) : user?.role === "admin" ? (
 						liked ? (
 							<FaLinkSlash />
 						) : (

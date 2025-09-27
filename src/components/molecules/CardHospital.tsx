@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { FaHeart, FaHeartBroken } from "react-icons/fa";
 import supabaseClient from "../../lib/supabaseClient";
@@ -28,14 +28,17 @@ function truncateText(text: string, maxLength: number): string {
 
 const CardHospital = (props: Props) => {
 	const navigate = useNavigate();
-	const [liked, setLiked] = useState<boolean>(false);
-	const [isOwnHospital, setIsOwnHospital] = useState<boolean>(false);
+	const [liked, setLiked] = useState(false);
+	const [isOwnHospital, setIsOwnHospital] = useState(false);
+	const [isLoading, setIsLoading] = useState(true);
+
 	const { user } = useSession();
+	const hasFetched = useRef(false);
 
 	useEffect(() => {
-		const checkStatus = async () => {
-			if (!user) return;
+		if (!user || hasFetched.current) return;
 
+		const checkStatus = async () => {
 			if (user.role === "admin") {
 				const { data: hospital, error } = await supabaseClient
 					.from("hospitals")
@@ -67,8 +70,9 @@ const CardHospital = (props: Props) => {
 				console.error("Error al verificar like:", likeError);
 				return;
 			}
-
+			setIsLoading(false);
 			setLiked(!!data);
+			hasFetched.current = true;
 		};
 
 		checkStatus();
@@ -171,24 +175,29 @@ const CardHospital = (props: Props) => {
 					</ButtonForm>
 
 					{!isOwnHospital ? (
-						<ButtonForm
+						<button
 							onClick={toggleLike}
-							className={`rounded-md cursor-pointer  bg-[#F3F4F6] ${
+							className={`rounded-md cursor-pointer px-4 bg-[#F3F4F6] flex items-center justify-center ${
 								liked ? "text-gray-600" : "text-rose-500"
 							}`}
 							type="button"
+							disabled={isLoading}
 						>
-							{liked ? <FaHeartBroken /> : <FaHeart />}
-						</ButtonForm>
-					) : (
-						<></>
-					)}
+							{isLoading ? (
+								<span className="animate-spin w-4 h-4 border-2 border-t-transparent border-rose-500 rounded-full" />
+							) : liked ? (
+								<FaHeartBroken />
+							) : (
+								<FaHeart />
+							)}
+						</button>
+					) : null}
 
 					{isOwnHospital ? (
 						<Link to="/">
-							<ButtonForm className=" bg-gray-500">
+							<button className="h-full rounded-md cursor-pointer px-4 bg-[#F3F4F6] flex flex-col items-center justify-center">
 								<FaGear />
-							</ButtonForm>
+							</button>
 						</Link>
 					) : (
 						<></>

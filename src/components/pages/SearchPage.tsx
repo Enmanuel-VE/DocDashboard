@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import supabaseClient from "../../lib/supabaseClient";
 
 import CardDoctor from "../molecules/CardDoctor";
@@ -39,14 +39,16 @@ const SearchPage = () => {
 	const [doctors, setDoctors] = useState<Doctor[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 
+	const hasFetched = useRef(false);
+
 	const { user } = useSession();
 
 	useEffect(() => {
+		if (!user || hasFetched.current) return;
+
 		const fetchData = async () => {
 			try {
 				setLoading(true);
-
-				if (!user) return;
 
 				const { data: hospitalData } = await supabaseClient
 					.from("hospitals")
@@ -63,6 +65,7 @@ const SearchPage = () => {
 			} catch (error) {
 				console.error("Error fetching data:", error);
 			} finally {
+				hasFetched.current = true;
 				setLoading(false);
 			}
 		};
@@ -97,30 +100,31 @@ const SearchPage = () => {
 				</h1>
 
 				{/* Tabs */}
-				<div className="flex gap-4 border-b">
-					{tabs.map((tab) => (
-						<button
-							key={tab}
-							onClick={() => setActiveTab(tab)}
-							className={`py-2 px-4 text-sm font-medium ${
-								activeTab === tab
-									? "text-rose-500 border-b-2 border-rose-500"
-									: "text-gray-500 hover:text-gray-700"
-							}`}
-						>
-							{tab}
-						</button>
-					))}
+				<div className="flex flex-row gap-3">
+					<input
+						type="text"
+						placeholder={`Buscar ${activeTab.toLowerCase()}...`}
+						value={search}
+						onChange={(e) => setSearch(e.target.value)}
+						className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-400 w-full sm:w-96"
+					/>
+
+					<div className="flex flex-row bg-gray-100 rounded-md">
+						{tabs.map((tab) => (
+							<button
+								key={tab}
+								onClick={() => setActiveTab(tab)}
+								className={`cursor-pointer rounded-md py-2 px-4 text-sm font-medium ${
+									activeTab === tab
+										? "text-white bg-rose-500"
+										: "text-gray-500 hover:text-gray-700"
+								}`}
+							>
+								{tab}
+							</button>
+						))}
+					</div>
 				</div>
-
-				<input
-					type="text"
-					placeholder={`Buscar ${activeTab.toLowerCase()}...`}
-					value={search}
-					onChange={(e) => setSearch(e.target.value)}
-					className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-400 w-full sm:w-96"
-				/>
-
 				{/* Resultados */}
 				{loading ? (
 					<div className="flex-1 flex flex-col items-center justify-center">

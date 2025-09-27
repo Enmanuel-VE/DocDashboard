@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import supabaseClient from "../../lib/supabaseClient";
 
 import HeroSection from "../organisms/HeroSection";
@@ -35,50 +35,63 @@ export default function Dashboard() {
 	const [doctors, setDoctors] = useState<Doctor[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 
+	const hasFetched = useRef(false);
+
 	const { user } = useSession();
 
 	useEffect(() => {
-		const fetchData = async () => {
-			setLoading(true);
-
-			if (!user) {
-				setLoading(false);
-				return;
-			}
-
-			const { data: hospitalLikes } = await supabaseClient
-				.from("hospital_likes")
-				.select("hospital_id")
-				.eq("user_id", user.id);
-
-			const hospitalIds = hospitalLikes?.map((l) => l.hospital_id) ?? [];
-
-			const { data: likedHospitalsData } =
-				hospitalIds.length > 0
-					? await supabaseClient
-							.from("hospitals")
-							.select("*")
-							.in("id", hospitalIds)
-					: { data: [] };
-
-			const { data: doctorLikes } = await supabaseClient
-				.from("professional_likes")
-				.select("professional_id")
-				.eq("user_id", user.id);
-
-			const doctorIds = doctorLikes?.map((l) => l.professional_id) ?? [];
-
-			const { data: likedDoctorsData } =
-				doctorIds.length > 0
-					? await supabaseClient
-							.from("profiles")
-							.select("*")
-							.in("id", doctorIds)
-					: { data: [] };
-
-			setHospitals(likedHospitalsData ?? []);
-			setDoctors(likedDoctorsData ?? []);
+		if (!user || hasFetched.current) {
 			setLoading(false);
+			return;
+		}
+
+		const fetchData = async () => {
+			try {
+				setLoading(true);
+
+				const { data: hospitalLikes } = await supabaseClient
+					.from("hospital_likes")
+					.select("hospital_id")
+					.eq("user_id", user.id);
+
+				const { data: doctorLikes } = await supabaseClient
+					.from("professional_likes")
+					.select("professional_id")
+					.eq("user_id", user.id);
+
+				if (hospitalLikes) {
+					const hospitalIds =
+						hospitalLikes.map((l) => l.hospital_id) ?? [];
+
+					const { data: likedHospitalsData } =
+						hospitalIds.length > 0
+							? await supabaseClient
+									.from("hospitals")
+									.select("*")
+									.in("id", hospitalIds)
+							: { data: [] };
+					setHospitals(likedHospitalsData ?? []);
+				}
+
+				if (doctorLikes) {
+					const doctorIds =
+						doctorLikes.map((l) => l.professional_id) ?? [];
+
+					const { data: likedDoctorsData } =
+						doctorIds.length > 0
+							? await supabaseClient
+									.from("profiles")
+									.select("*")
+									.in("id", doctorIds)
+							: { data: [] };
+					setDoctors(likedDoctorsData ?? []);
+				}
+			} catch (error) {
+				console.error(error);
+			} finally {
+				setLoading(false);
+				hasFetched.current = true;
+			}
 		};
 
 		fetchData();

@@ -2,6 +2,7 @@ import CardDoctor from "../molecules/CardDoctor";
 import HospitalInfoGrid from "../molecules/HospitalInfoGrid";
 import HospitalFAQ from "../atoms/HospitalFAQ";
 import { useState } from "react";
+import Markdown from "react-markdown";
 
 export type HospitalTabsSectionProps = {
 	hospital: HospitalDetail;
@@ -38,35 +39,26 @@ export type Doctor = {
 
 type FAQ = { question: string; answer: string };
 
-export default function HospitalTabsSection({
-	hospital,
-	faqs,
-	activeTab,
-	setActiveTab,
-	search,
-	setSearch,
-	filteredDoctors,
-	tabs,
-}: HospitalTabsSectionProps) {
+const HospitalTabsSection = (props: HospitalTabsSectionProps) => {
 	const [faqSearch, setFaqSearch] = useState("");
 
 	return (
 		<>
 			<h1 className="text-3xl font-bold text-rose-500">
-				{hospital.name}
+				{props.hospital.name}
 			</h1>
 			{/* Tabs */}
-			<div className="flex gap-4 border-b">
-				{tabs.map((tab) => (
+			<div className="flex flex-row-reverse bg-gray-100 rounded-md">
+				{props.tabs.map((tab) => (
 					<button
 						key={tab}
 						onClick={() => {
-							setActiveTab(tab);
-							setSearch("");
+							props.setActiveTab(tab);
+							props.setSearch("");
 						}}
-						className={`py-2 px-4 text-sm font-medium ${
-							activeTab === tab
-								? "text-rose-500 border-b-2 border-rose-500"
+						className={`cursor-pointer py-2 px-4 text-sm font-medium ${
+							props.activeTab === tab
+								? "bg-rose-500  text-white rounded-md"
 								: "text-gray-500 hover:text-gray-700"
 						}`}
 					>
@@ -75,19 +67,71 @@ export default function HospitalTabsSection({
 				))}
 			</div>
 			{/* Sobre el hospital */}
-			{activeTab === "Sobre el hospital" && (
+			{props.activeTab === "Sobre el hospital" && (
 				<section className="flex flex-col gap-6">
-					<p className="text-gray-700">{hospital.description}</p>
+					<div className="prose prose-sm max-w-none text-gray-700">
+						<Markdown
+							components={{
+								p: ({ ...props }) => (
+									<p
+										className="mb-4 leading-relaxed text-sm text-gray-700"
+										{...props}
+									/>
+								),
+								h2: ({ ...props }) => (
+									<h2
+										className="text-lg font-semibold text-gray-800 mt-5 mb-2 border-b pb-1"
+										{...props}
+									/>
+								),
+								ul: ({ ...props }) => (
+									<ul
+										className="list-disc list-inside mb-4 text-sm text-gray-700"
+										{...props}
+									/>
+								),
+								ol: ({ ...props }) => (
+									<ol
+										className="list-decimal list-inside mb-4 text-sm text-gray-700"
+										{...props}
+									/>
+								),
+								li: ({ ...props }) => (
+									<li
+										className="mb-1 text-sm text-gray-700"
+										{...props}
+									/>
+								),
+								a: ({ ...props }) => (
+									<a
+										className="text-sm text-rose-600 underline hover:text-rose-700 transition-colors"
+										target="_blank"
+										rel="noopener noreferrer"
+										{...props}
+									/>
+								),
+								blockquote: ({ ...props }) => (
+									<blockquote
+										className="border-l-4 border-gray-300 pl-4 italic text-gray-600 mb-4"
+										{...props}
+									/>
+								),
+							}}
+						>
+							{props.hospital.description}
+						</Markdown>
+					</div>
+
 					<HospitalInfoGrid
-						address={hospital.address}
-						zone={hospital.zone}
-						phone={hospital.phone}
-						email={hospital.email}
+						address={props.hospital.address}
+						zone={props.hospital.zone}
+						phone={props.hospital.phone}
+						email={props.hospital.email}
 					/>
 				</section>
 			)}
 			{/* Profesionales */}
-			{activeTab === "Profesionales" && (
+			{props.activeTab === "Profesionales" && (
 				<section className="flex flex-col gap-6">
 					<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
 						<h2 className="text-xl font-semibold text-gray-800">
@@ -96,20 +140,20 @@ export default function HospitalTabsSection({
 						<input
 							type="text"
 							placeholder="Buscar profesional..."
-							value={search}
-							onChange={(e) => setSearch(e.target.value)}
+							value={props.search}
+							onChange={(e) => props.setSearch(e.target.value)}
 							className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-400 w-full sm:w-64"
 						/>
 					</div>
 					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-						{filteredDoctors.length > 0 ? (
-							filteredDoctors.map((doc) => (
+						{props.filteredDoctors.length > 0 ? (
+							props.filteredDoctors.map((doc) => (
 								<CardDoctor
 									key={doc.id}
 									id={doc.id}
 									name={`${doc.name} ${doc.last_name}`}
 									specialty={doc.specialty ?? ""}
-									hospital={hospital.name}
+									hospital={props.hospital.name}
 									image={doc.avatar ?? ""}
 								/>
 							))
@@ -122,7 +166,7 @@ export default function HospitalTabsSection({
 				</section>
 			)}
 			{/* FAQ */}
-			{activeTab === "Preguntas frecuentes" && (
+			{props.activeTab === "Preguntas frecuentes" && (
 				<section className="flex flex-col gap-6">
 					<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
 						<h2 className="text-xl font-semibold text-gray-800">
@@ -138,7 +182,7 @@ export default function HospitalTabsSection({
 					</div>
 
 					<div className="flex flex-col gap-4">
-						{faqs
+						{props.faqs
 							.filter(
 								(faq) =>
 									faq.question
@@ -160,4 +204,5 @@ export default function HospitalTabsSection({
 			)}
 		</>
 	);
-}
+};
+export default HospitalTabsSection;
