@@ -1,5 +1,5 @@
-import supabaseClient from "../../../../lib/supabaseClient";
-import type { Doctor } from "../../../organisms/HospitalTabsSection";
+import supabaseClient from "../../../lib/supabaseClient";
+import type { Doctor } from "../../../types/profile";
 
 const fetchProfessionalsByHospital = async (hospitalId: string) => {
 	const { data, error } = await supabaseClient

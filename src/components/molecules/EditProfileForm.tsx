@@ -11,8 +11,8 @@ interface Props {
 	isProfessional?: boolean;
 }
 
-function EditProfileForm(props: Props) {
-	const { handleSubmit, register } = useFormContext();
+const EditProfileForm = (props: Props) => {
+	const { handleSubmit } = useFormContext();
 
 	return (
 		<form
@@ -21,6 +21,7 @@ function EditProfileForm(props: Props) {
 		>
 			<div className="flex flex-col sm:flex-row gap-4">
 				<InputForm
+					label="Nombre"
 					name="name"
 					type="text"
 					autoComplete="name"
@@ -34,6 +35,7 @@ function EditProfileForm(props: Props) {
 					}}
 				/>
 				<InputForm
+					label="Apellido"
 					name="last_name"
 					type="text"
 					autoComplete="family-name"
@@ -48,18 +50,22 @@ function EditProfileForm(props: Props) {
 				/>
 			</div>
 
-			<textarea
+			<InputForm
+				label="Biografía"
+				name="bio"
+				isTextArea
 				placeholder="Biografía - Puedes usar markdown para potenciar tu presentación."
 				className="textarea max-h-[30dvh] w-full"
-				{...register("bio", {
+				options={{
 					maxLength: {
 						value: 2500,
 						message: "Máximo 2500 caracteres",
 					},
-				})}
-			></textarea>
+				}}
+			/>
 
 			<InputForm
+				label="Correo"
 				name="email"
 				autoComplete="email"
 				type="email"
@@ -71,12 +77,13 @@ function EditProfileForm(props: Props) {
 						message: "El correo es obligatorio",
 					},
 					pattern: {
-						value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+						value: /^[^S@]+@[^S@]+S[^S@]+$/,
 						message: "Ingrese un correo válido",
 					},
 				}}
 			/>
 			<InputForm
+				label="Teléfono"
 				name="phone"
 				type="phone"
 				placeholder="Teléfono"
@@ -93,6 +100,7 @@ function EditProfileForm(props: Props) {
 			{props.isProfessional && (
 				<>
 					<InputForm
+						label="Especialidad"
 						name="specialty"
 						type="text"
 						placeholder="Especialidad"
@@ -105,6 +113,7 @@ function EditProfileForm(props: Props) {
 						}}
 					/>
 					<InputForm
+						label="Servicios"
 						name="services"
 						type="text"
 						placeholder="Servicios (separados por coma)"
@@ -115,7 +124,7 @@ function EditProfileForm(props: Props) {
 								message: "Los servicios son obligatorios",
 							},
 							pattern: {
-								value: /^(?!\s*,)(?!.*,\s*,)(?!.*,$)[a-zA-ZÀ-ÿ0-9\s,]+$/,
+								value: /^(?!\s*,)(?!.*,\s*,)(?!.*,$\\)[a-zA-ZÀ-ÿ0-9\s,]+$/,
 								message:
 									"Formato inválido. Ejemplo: Servicio1, Servicio2",
 							},
@@ -125,6 +134,7 @@ function EditProfileForm(props: Props) {
 			)}
 
 			<InputForm
+				label="Enlace del perfil"
 				name="avatar"
 				type="text"
 				options={{}}
@@ -139,6 +149,6 @@ function EditProfileForm(props: Props) {
 			</button>
 		</form>
 	);
-}
+};
 
 export default EditProfileForm;

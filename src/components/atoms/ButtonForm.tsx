@@ -2,18 +2,25 @@ import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
 	children: ReactNode;
+	isPrimary?: boolean;
 }
 
-const ButtonForm = (props: Props) => {
+const ButtonForm = ({ children, isPrimary, ...props }: Props) => {
+	const baseClass = "btn rounded-md";
+	const primaryClass = "bg-rose-500 text-white";
+
+	const finalClassName = [
+		baseClass,
+		isPrimary ? primaryClass : "",
+		props.className || ""
+	].join(" ").trim();
+
 	return (
 		<button
 			{...props}
-			className={
-				"btn bg-rose-500 text-white rounded-md " +
-				(props.className ? props.className : "")
-			}
+			className={finalClassName}
 		>
-			{props.children}
+			{children}
 		</button>
 	);
 };

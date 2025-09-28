@@ -11,7 +11,6 @@ type Props = {
 	name: string;
 	zone: string;
 	description: string;
-	rating: number;
 	specialists: number;
 	services: string[];
 	image: string;
@@ -19,12 +18,12 @@ type Props = {
 
 const MAX_PILLS = 3;
 
-function truncateText(text: string, maxLength: number): string {
+const truncateText = (text: string, maxLength: number): string => {
 	const isLongerThanMaxLength = text.length > maxLength;
 	const newText = text.slice(0, maxLength).trim() + "...";
 
 	return isLongerThanMaxLength ? newText : text;
-}
+};
 
 const CardHospital = (props: Props) => {
 	const navigate = useNavigate();

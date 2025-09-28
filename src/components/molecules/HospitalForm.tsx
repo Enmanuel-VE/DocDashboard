@@ -8,16 +8,16 @@ import {
 	type SubmitHandler,
 } from "react-hook-form";
 import { MdEmail, MdOutlineMedicalServices } from "react-icons/md";
-import type { HospitalDetail } from "../organisms/HospitalTabsSection";
+import type { Hospital } from "../../types/hospital";
 
 interface Props {
-	onSubmit: SubmitHandler<FieldValues | HospitalDetail>;
-	hospital: HospitalDetail | null;
+	onSubmit: SubmitHandler<FieldValues | Hospital>;
+	hospital: Hospital | null;
 	handleDelete: () => Promise<void>;
 }
 
 const HospitalForm = (props: Props) => {
-	const { handleSubmit, register } = useFormContext();
+	const { handleSubmit } = useFormContext();
 
 	return (
 		<form
@@ -25,6 +25,7 @@ const HospitalForm = (props: Props) => {
 			className="flex flex-col w-full gap-3"
 		>
 			<InputForm
+				label="Nombre del hospital"
 				name="name"
 				type="text"
 				Icon={FaHome}
@@ -39,9 +40,11 @@ const HospitalForm = (props: Props) => {
 				className="w-full"
 			/>
 
-			<textarea
-				placeholder="Descripción del hospital"
-				{...register("description", {
+			<InputForm
+				label="Descripción del hospital"
+				name="description"
+				isTextArea
+				options={{
 					required: {
 						value: true,
 						message: "La descripción del hospital es obligatoria",
@@ -50,12 +53,13 @@ const HospitalForm = (props: Props) => {
 						value: 4000,
 						message: "Máximo 4000 caracteres",
 					},
-				})}
-				id="bio"
-				className="input p-4 min-h-[10dvh] max-h-[25dvh] w-full"
+				}}
+				placeholder="Descripción del hospital"
+				className="w-full"
 			/>
 			<div className="flex flex-col sm:flex-row gap-4">
 				<InputForm
+					label="Dirección"
 					name="address"
 					options={{
 						required: {
@@ -70,6 +74,7 @@ const HospitalForm = (props: Props) => {
 					placeholder="Dirección"
 				/>
 				<InputForm
+					label="Zona"
 					name="zone"
 					options={{
 						required: {
@@ -85,6 +90,7 @@ const HospitalForm = (props: Props) => {
 				/>
 			</div>
 			<InputForm
+				label="Teléfono"
 				name="phone"
 				options={{
 					required: {
@@ -99,6 +105,7 @@ const HospitalForm = (props: Props) => {
 				placeholder="Teléfono"
 			/>
 			<InputForm
+				label="Correo electrónico"
 				name="email"
 				type="email"
 				placeholder="Correo electrónico"
@@ -119,6 +126,7 @@ const HospitalForm = (props: Props) => {
 			/>
 
 			<InputForm
+				label="URL de imagen"
 				name="image"
 				type="text"
 				placeholder="URL de imagen"
@@ -135,6 +143,7 @@ const HospitalForm = (props: Props) => {
 			/>
 
 			<InputForm
+				label="Servicios"
 				name="services"
 				type="text"
 				placeholder="Servicios (separados por coma)"
@@ -150,7 +159,9 @@ const HospitalForm = (props: Props) => {
 			/>
 
 			{!props.hospital ? (
-				<ButtonForm type="submit">Crear hospital</ButtonForm>
+				<ButtonForm type="submit" isPrimary>
+					Crear hospital
+				</ButtonForm>
 			) : (
 				<div className="flex flex-row justify-center gap-4">
 					<ButtonForm
@@ -161,7 +172,7 @@ const HospitalForm = (props: Props) => {
 						Eliminar hospital
 					</ButtonForm>
 
-					<ButtonForm className="flex-1/2" type="submit">
+					<ButtonForm className="flex-1/2" type="submit" isPrimary>
 						Actualizar hospital
 					</ButtonForm>
 				</div>

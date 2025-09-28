@@ -35,6 +35,7 @@ const AuthForm = ({
 			{isSignUp && (
 				<div className="flex flex-col sm:flex-row gap-3">
 					<InputForm
+						label="Nombres"
 						name="name"
 						autoComplete="given-name"
 						className="w-full sm:w-1/2"
@@ -44,6 +45,7 @@ const AuthForm = ({
 						options={{ required: true }}
 					/>
 					<InputForm
+						label="Apellidos"
 						name="lastName"
 						autoComplete="family-name"
 						className="w-full sm:w-1/2"
@@ -55,6 +57,7 @@ const AuthForm = ({
 			)}
 
 			<InputForm
+				label="Correo"
 				name="email"
 				autoComplete="email"
 				className="w-full"
@@ -65,6 +68,7 @@ const AuthForm = ({
 			/>
 
 			<InputForm
+				label={isSignUp ? "Crear contraseña" : "Contraseña"}
 				name="password"
 				autoComplete={isSignUp ? "new-password" : "current-password"}
 				className="w-full"
@@ -77,6 +81,7 @@ const AuthForm = ({
 			{isSignUp && (
 				<>
 					<InputForm
+						label="Confirmar contraseña"
 						name="repeatPassword"
 						autoComplete="new-password"
 						className="w-full"

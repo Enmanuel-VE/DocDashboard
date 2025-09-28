@@ -7,7 +7,7 @@ interface Props {
 
 const HeroSection = (props: Props) => {
 	const onChange: React.ChangeEventHandler<HTMLInputElement> = useCallback(
-		function (e) {
+		(e) => {
 			props.setSearch(e.target.value);
 		},
 		[props]

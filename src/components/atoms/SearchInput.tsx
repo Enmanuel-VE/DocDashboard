@@ -6,7 +6,7 @@ type Props = {
 	placeholder?: string;
 };
 
-export default function SearchInput({ value, onChange, placeholder }: Props) {
+const SearchInput = ({ value, onChange, placeholder }: Props) => {
 	return (
 		<input
 			type="text"
@@ -16,4 +16,6 @@ export default function SearchInput({ value, onChange, placeholder }: Props) {
 			className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-400"
 		/>
 	);
-}
+};
+
+export default SearchInput;

@@ -1,4 +1,4 @@
-import type { Doctor } from "../organisms/HospitalTabsSection";
+import type { Doctor } from "../../types/profile";
 import CardDoctor from "./CardDoctor";
 
 interface Props {

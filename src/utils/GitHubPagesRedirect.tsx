@@ -1,7 +1,8 @@
 import { useEffect } from "react";
-import { useSession } from "../../context/session";
+
 import { handleGitHubPagesRedirect } from "./handleGitHubPagesRedirect";
-import { router } from "../../routes/AppRoutes";
+import { useSession } from "../context/session";
+import { router } from "../routes/AppRoutes";
 
 const GitHubPagesRedirect = () => {
 	const { loading } = useSession();

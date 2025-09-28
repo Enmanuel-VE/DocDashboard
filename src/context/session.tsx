@@ -1,18 +1,5 @@
 import { createContext, useContext } from "react";
-
-export interface Profile {
-	id: string;
-	name: string;
-	last_name: string;
-	email: string;
-	role: "admin" | "professional" | "patient";
-	phone?: string;
-	avatar?: string;
-	hospital?: string;
-	specialty?: string;
-	services?: string[];
-	bio?: string;
-}
+import type { Profile } from "../types/profile";
 
 export interface SessionContextType {
 	user: Profile | null;

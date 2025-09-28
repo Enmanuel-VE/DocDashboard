@@ -13,7 +13,7 @@ type Props = {
 	image: string;
 };
 
-function CardDoctor(props: Props) {
+const CardDoctor = (props: Props) => {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const { user } = useSession();
@@ -214,6 +214,6 @@ function CardDoctor(props: Props) {
 			</div>
 		</div>
 	);
-}
+};
 
 export default CardDoctor;

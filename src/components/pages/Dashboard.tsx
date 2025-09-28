@@ -9,27 +9,10 @@ import EmptyState from "../atoms/EmptyState";
 import Favorites from "../organisms/Favorite";
 import { useSession } from "../../context/session";
 
-type Hospital = {
-	id: string;
-	name: string;
-	description: string;
-	zone?: string;
-	specialists?: number;
-	services?: string[];
-	image?: string;
-};
+import type { Hospital } from "../../types/hospital";
+import type { Doctor } from "../../types/profile";
 
-type Doctor = {
-	id: string;
-	name: string;
-	last_name: string;
-	specialty?: string;
-	hospital?: string;
-	avatar?: string;
-	rating?: number;
-};
-
-export default function Dashboard() {
+const Dashboard = () => {
 	const [search, setSearch] = useState<string>("");
 	const [hospitals, setHospitals] = useState<Hospital[]>([]);
 	const [doctors, setDoctors] = useState<Doctor[]>([]);
@@ -144,4 +127,5 @@ export default function Dashboard() {
 			</main>
 		</div>
 	);
-}
+};
+export default Dashboard;

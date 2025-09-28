@@ -1,5 +1,4 @@
 import ProfessionalProfile from "../components/pages/ProfessionalProfile";
-import RoleDashboard from "../components/utils/RoleDashboard";
 import MainLayout from "../components/templates/MainLayout";
 import HospitalPage from "../components/pages/HospitalPage";
 import SearchPage from "../components/pages/SearchPage";
@@ -14,6 +13,7 @@ import PublicRoute from "./guards/PublicRoute";
 import type { RouteObject, DOMRouterOpts } from "react-router";
 import { createBrowserRouter } from "react-router";
 import HospitalTemplate from "../components/templates/HospitalTemplate";
+import RoleDashboard from "../utils/RoleDashboard";
 
 export const routes: RouteObject[] = [
 	{

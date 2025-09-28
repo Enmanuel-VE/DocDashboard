@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import supabaseClient from "../../lib/supabaseClient";
 import { FaSpinner } from "react-icons/fa";
 
@@ -7,27 +7,41 @@ const StatsSection = () => {
 	const [doctorCount, setDoctorCount] = useState(0);
 	const [loading, setLoading] = useState(true);
 
+	const hasFetched = useRef(false);
+
 	useEffect(() => {
-		async function fetchCounts() {
-			setLoading(true);
+		if (hasFetched.current) return;
 
-			const { count: hCount, error: hError } = await supabaseClient
-				.from("hospitals")
-				.select("id", { head: true, count: "exact" });
+		const fetchCounts = async () => {
+			try {
+				setLoading(true);
 
-			if (hError) console.error("Error contando hospitales:", hError);
-			else setHospitalCount(hCount ?? 0);
+				const queries = [
+					{ table: "hospitals", setter: setHospitalCount },
+					{
+						table: "profiles",
+						setter: setDoctorCount,
+						filter: { key: "role", value: "professional" },
+					},
+				];
 
-			const { count: dCount, error: dError } = await supabaseClient
-				.from("profiles")
-				.select("id", { head: true, count: "exact" })
-				.eq("role", "professional");
+				for (const { table, setter, filter } of queries) {
+					let query = supabaseClient
+						.from(table)
+						.select("id", { head: true, count: "exact" });
+					if (filter) query = query.eq(filter.key, filter.value);
 
-			if (dError) console.error("Error contando profesionales:", dError);
-			else setDoctorCount(dCount ?? 0);
-
-			setLoading(false);
-		}
+					const { count, error } = await query;
+					if (error) console.error(`Error contando ${table}:`, error);
+					else setter(count ?? 0);
+				}
+			} catch (error) {
+				console.error("Error al obtener estadísticas:", error);
+			} finally {
+				hasFetched.current = true;
+				setLoading(false);
+			}
+		};
 
 		fetchCounts();
 	}, []);

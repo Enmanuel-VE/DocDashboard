@@ -1,25 +1,25 @@
-import {
-	FormProvider,
-	useForm,
-	type FieldValues,
-	type SubmitHandler,
-} from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import HospitalForm from "../molecules/HospitalForm";
-import type { HospitalDetail } from "../organisms/HospitalTabsSection";
+
 import { useSession } from "../../context/session";
 import { useCallback, useEffect, useRef, useState } from "react";
 import HospitalPage from "./HospitalPage";
-import deleteHospital from "../utils/api/delete/deleteHospital";
-import updateHospital from "../utils/api/update/updateHospital";
-import createHospital from "../utils/api/create/createHospital";
-import fetchHospitalByAdmin from "../utils/api/get/fetchHospitalByAdmin";
+import FaqManager from "../organisms/FaqManager";
 
-type HospitalPayload = Omit<HospitalDetail, "id">;
+import fetchHospitalByAdmin from "../../utils/api/get/fetchHospitalByAdmin";
+import updateHospital from "../../utils/api/update/updateHospital";
+import createHospital from "../../utils/api/create/createHospital";
+import deleteHospital from "../../utils/api/delete/deleteHospital";
+
+import type { FieldValues, SubmitHandler } from "react-hook-form";
+import type { Hospital } from "../../types/hospital";
+
+type HospitalPayload = Omit<Hospital, "id">;
 
 const AdminDashboard = () => {
 	const methods = useForm<HospitalPayload>();
 	const { user } = useSession();
-	const [hospital, setHospital] = useState<HospitalDetail | null>(null);
+	const [hospital, setHospital] = useState<Hospital | null>(null);
 
 	const hasFetched = useRef<Record<string, boolean>>({});
 
@@ -40,7 +40,7 @@ const AdminDashboard = () => {
 		loadHospital();
 	}, [user, loadHospital]);
 
-	const onSubmit: SubmitHandler<HospitalDetail | FieldValues> = async (h) => {
+	const onSubmit: SubmitHandler<Hospital | FieldValues> = async (h) => {
 		if (!user || user.role !== "admin") return;
 
 		const formatServices =
@@ -111,6 +111,7 @@ const AdminDashboard = () => {
 							onSubmit={onSubmit}
 						/>
 					</FormProvider>
+					<FaqManager hospital={hospital} />
 				</div>
 				<div className="flex flex-col p-4 gap-3">
 					<HospitalPage hospital={hospital} />

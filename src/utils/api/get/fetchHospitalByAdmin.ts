@@ -1,9 +1,9 @@
-import supabaseClient from "../../../../lib/supabaseClient";
-import type { HospitalDetail } from "../../../organisms/HospitalTabsSection";
+import supabaseClient from "../../../lib/supabaseClient";
+import type { Hospital } from "../../../types/hospital";
 
 const fetchHospitalByAdmin = async (
 	adminId: string
-): Promise<HospitalDetail | null> => {
+): Promise<Hospital | null> => {
 	const { data, error } = await supabaseClient
 		.from("hospitals")
 		.select("*")

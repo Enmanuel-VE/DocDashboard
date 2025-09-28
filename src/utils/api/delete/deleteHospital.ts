@@ -1,4 +1,4 @@
-import supabaseClient from "../../../../lib/supabaseClient";
+import supabaseClient from "../../../lib/supabaseClient";
 
 const deleteHospital = async (hospitalId: string) => {
 	const { error } = await supabaseClient

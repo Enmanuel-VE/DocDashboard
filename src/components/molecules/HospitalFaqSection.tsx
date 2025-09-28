@@ -5,7 +5,7 @@ interface Props {
 	faqSearch: string;
 	setFaqSearch: (value: string) => void;
 }
-export type FAQ = { question: string; answer: string };
+export type FAQ = { id: string; question: string; answer: string };
 
 const HospitalFaqSection = (props: Props) => (
 	<section className="flex flex-col gap-6">
@@ -32,9 +32,9 @@ const HospitalFaqSection = (props: Props) => (
 							.toLowerCase()
 							.includes(props.faqSearch.toLowerCase())
 				)
-				.map((faq, idx) => (
+				.map((faq) => (
 					<HospitalFAQ
-						key={idx}
+						key={faq.id}
 						question={faq.question}
 						answer={faq.answer}
 					/>

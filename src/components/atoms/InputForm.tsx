@@ -10,8 +10,10 @@ import { useFormContext } from "react-hook-form";
 interface Props {
 	options?: RegisterOptions<FieldValues, string> | undefined;
 	name: string;
+	label: string;
+	isTextArea?: boolean;
 
-	type: HTMLInputTypeAttribute | undefined;
+	type?: HTMLInputTypeAttribute | undefined;
 	Icon?: IconType;
 
 	placeholder?: string;
@@ -26,19 +28,38 @@ const InputForm = (props: Props) => {
 		? { autoComplete: props.autoComplete }
 		: {};
 
+	const commonProps = {
+		...register(props.name, props.options),
+		placeholder: props.placeholder,
+		...autoCompleteProp,
+	};
+
 	return (
 		<label
-			className={`input rounded-md p-4 h-auto ${
-				props.className ? props.className : ""
-			}`}
+			className={`flex flex-col gap-1 form-control w-full ${
+				props.className || ""
+			}`.trim()}
 		>
-			{props.Icon && <props.Icon className="text-gray-500" />}
-			<input
-				type={props.type}
-				placeholder={props.placeholder}
-				{...autoCompleteProp}
-				{...register(props.name, props.options)}
-			/>
+			{props.label && (
+				<div className="label">
+					<span className="label-text">{props.label}</span>
+				</div>
+			)}
+			{props.isTextArea ? (
+				<textarea
+					{...commonProps}
+					className="textarea textarea-bordered h-24 w-full"
+				/>
+			) : (
+				<div className="input w-full input-bordered flex items-center gap-2">
+					{props.Icon && <props.Icon />}
+					<input
+						type={props.type}
+						className="grow w-full"
+						{...commonProps}
+					/>
+				</div>
+			)}
 		</label>
 	);
 };

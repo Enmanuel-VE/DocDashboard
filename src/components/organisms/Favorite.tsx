@@ -2,43 +2,25 @@ import SectionHeading from "../molecules/SectionHeading";
 import ResultsGrid from "../molecules/ResultsGrid";
 import CardDoctor from "../molecules/CardDoctor";
 import CardHospital from "../molecules/CardHospital";
+import type { Hospital } from "../../types/hospital";
+import type { Doctor } from "../../types/profile";
 
-type Hospital = {
-	id: string;
-	name: string;
-	description: string;
-	zone?: string;
-	specialists?: number;
-	services?: string[];
-	image?: string;
-};
-
-type Doctor = {
-	id: string;
-	name: string;
-	last_name: string;
-	specialty?: string;
-	hospital?: string;
-	avatar?: string;
-	rating?: number;
-};
-
-type Props = {
+interface Props {
 	doctors: Doctor[];
 	hospitals: Hospital[];
-};
+}
 
-export default function Favorites({ doctors, hospitals }: Props) {
+const Favorites = (props: Props) => {
 	return (
 		<>
 			<section className="flex flex-col gap-6">
-				{doctors.length > 0 ? (
+				{props.doctors.length > 0 ? (
 					<>
 						<SectionHeading>
 							Especialistas que te interesan
 						</SectionHeading>
 						<ResultsGrid
-							items={doctors}
+							items={props.doctors}
 							renderItem={(doctor) => (
 								<CardDoctor
 									key={doctor.id}
@@ -57,24 +39,23 @@ export default function Favorites({ doctors, hospitals }: Props) {
 			</section>
 
 			<section className="flex flex-col gap-6">
-				{hospitals.length > 0 ? (
+				{props.hospitals.length > 0 ? (
 					<>
 						<SectionHeading>
 							Hospitales destacados para ti
 						</SectionHeading>
 						<ResultsGrid
-							items={hospitals}
+							items={props.hospitals}
 							renderItem={(hospital) => (
 								<CardHospital
 									key={hospital.id}
 									id={hospital.id}
 									name={hospital.name}
 									zone={hospital.zone ?? ""}
-									description={hospital.description}
+									description={hospital.description ?? ""}
 									specialists={hospital.specialists ?? 0}
 									services={hospital.services ?? []}
 									image={hospital.image ?? ""}
-									rating={4.8}
 								/>
 							)}
 						/>
@@ -85,4 +66,6 @@ export default function Favorites({ doctors, hospitals }: Props) {
 			</section>
 		</>
 	);
-}
+};
+
+export default Favorites;

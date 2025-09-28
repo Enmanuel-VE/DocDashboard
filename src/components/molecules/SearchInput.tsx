@@ -4,7 +4,7 @@ interface Props {
 	placeholder?: string;
 }
 
-export default function SearchInput(props: Props) {
+const SearchInput = (props: Props) => {
 	const safeValue = typeof props.value === "string" ? props.value : "";
 	return (
 		<input
@@ -15,4 +15,5 @@ export default function SearchInput(props: Props) {
 			className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-400 w-full sm:w-96"
 		/>
 	);
-}
+};
+export default SearchInput;

@@ -1,7 +1,7 @@
-import supabaseClient from "../../../../lib/supabaseClient";
-import type { HospitalDetail } from "../../../organisms/HospitalTabsSection";
+import supabaseClient from "../../../lib/supabaseClient";
+import type { Hospital } from "../../../types/hospital";
 
-type HospitalPayload = Omit<HospitalDetail, "id">;
+type HospitalPayload = Omit<Hospital, "id">;
 
 const createHospital = async (
 	hospital: HospitalPayload,

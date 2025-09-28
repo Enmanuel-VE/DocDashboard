@@ -1,8 +1,8 @@
-import supabaseClient from "../../../../lib/supabaseClient";
-import type { HospitalDetail } from "../../../organisms/HospitalTabsSection";
+import supabaseClient from "../../../lib/supabaseClient";
+import type { Hospital } from "../../../types/hospital";
 
 const updateHospital = async (
-	hospital: HospitalDetail,
+	hospital: Hospital,
 	hospitalId: string,
 	adminId: string
 ) => {

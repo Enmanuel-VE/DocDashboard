@@ -1,8 +1,9 @@
-import type { FieldValues, SubmitHandler } from "react-hook-form";
 import AuthToggle from "../molecules/AuthToggle";
 import AuthHeader from "../molecules/AuthHeader";
 import AuthForm from "../molecules/AuthForm";
+
 import type { Dispatch, SetStateAction } from "react";
+import type { FieldValues, SubmitHandler } from "react-hook-form";
 
 interface AuthSectionProps {
 	isSignUp: boolean;

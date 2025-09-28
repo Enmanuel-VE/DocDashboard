@@ -1,7 +1,7 @@
-import { useSession } from "../../context/session";
-import Loading from "../atoms/Loading";
-import AdminDashboard from "../pages/AdminDashboard";
-import Dashboard from "../pages/Dashboard";
+import Loading from "../components/atoms/Loading";
+import AdminDashboard from "../components/pages/AdminDashboard";
+import Dashboard from "../components/pages/Dashboard";
+import { useSession } from "../context/session";
 
 const RoleDashboard = () => {
 	const { user, loading } = useSession();

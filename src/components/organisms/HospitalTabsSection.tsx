@@ -1,46 +1,28 @@
 import { useState, type Dispatch, type SetStateAction } from "react";
-import type { Tab } from "../pages/HospitalPage";
 import Loading from "../atoms/Loading";
 import TabBar from "../molecules/TabBar";
 import HospitalOverviewSection from "../molecules/HospitalOverviewSection";
 import HospitalDoctorsSection from "../molecules/HospitalDoctorsSection";
-import HospitalFaqSection, { type FAQ } from "../molecules/HospitalFaqSection";
+import HospitalFaqSection from "../molecules/HospitalFaqSection";
 
-export type HospitalTabsSectionProps = {
-	hospital: HospitalDetail;
-	doctors: Doctor[];
-	faqs: FAQ[];
+import type { Hospital } from "../../types/hospital";
+import type { Doctor } from "../../types/profile";
+import type { PartialFAQ } from "../../types/faq";
+import type { Tab } from "../../types/tab";
+
+interface Props {
+	hospital: Hospital;
+	tabs: Tab[];
 	activeTab: Tab;
 	setActiveTab: Dispatch<SetStateAction<Tab>>;
 	search: string;
 	setSearch: (value: string) => void;
 	filteredDoctors: Doctor[];
-	tabs: string[];
+	faqs: PartialFAQ[];
 	loading: boolean;
-};
+}
 
-export type HospitalDetail = {
-	id: string;
-	name: string;
-	description: string;
-	address: string;
-	zone?: string;
-	phone: string;
-	email: string;
-	image?: string;
-	services?: string | string[];
-	specialists?: number;
-};
-
-export type Doctor = {
-	id: string;
-	name: string;
-	last_name: string;
-	specialty: string | null;
-	avatar: string | null;
-};
-
-const HospitalTabsSection = (props: HospitalTabsSectionProps) => {
+const HospitalTabsSection = (props: Props) => {
 	const [faqSearch, setFaqSearch] = useState("");
 
 	return (

@@ -5,32 +5,10 @@ import CardDoctor from "../molecules/CardDoctor";
 import CardHospital from "../molecules/CardHospital";
 import { useSession } from "../../context/session";
 import Loading from "../atoms/Loading";
+import type { Hospital } from "../../types/hospital";
+import type { Doctor } from "../../types/profile";
 
 const tabs = ["Profesionales", "Hospitales"];
-
-type Hospital = {
-	id: string;
-	name: string;
-	description: string;
-	address?: string;
-	zone?: string;
-	phone?: string;
-	email?: string;
-	image?: string;
-	specialists?: number;
-	services?: string[];
-};
-
-type Doctor = {
-	id: string;
-	name: string;
-	last_name: string;
-	role: "professional";
-	specialty?: string;
-	hospital?: string;
-	avatar?: string;
-	rating?: number;
-};
 
 const SearchPage = () => {
 	const [activeTab, setActiveTab] = useState<string>(tabs[0]);
@@ -162,7 +140,6 @@ const SearchPage = () => {
 									specialists={hospital.specialists ?? 0}
 									services={hospital.services ?? []}
 									image={hospital.image ?? ""}
-									rating={4.8}
 								/>
 							))
 						) : (

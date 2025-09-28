@@ -4,25 +4,8 @@ import NoResults from "../atoms/NoResults";
 import CardDoctor from "../molecules/CardDoctor";
 import CardHospital from "../molecules/CardHospital";
 
-type Hospital = {
-	id: string;
-	name: string;
-	description: string;
-	zone?: string;
-	specialists?: number;
-	services?: string[];
-	image?: string;
-};
-
-type Doctor = {
-	id: string;
-	name: string;
-	last_name: string;
-	specialty?: string;
-	hospital?: string;
-	avatar?: string;
-	rating?: number;
-};
+import type { Doctor } from "../../types/profile";
+import type { Hospital } from "../../types/hospital";
 
 type Props = {
 	search: string;
@@ -30,22 +13,18 @@ type Props = {
 	filteredHospitals: Hospital[];
 };
 
-export default function SearchResults({
-	search,
-	filteredDoctors,
-	filteredHospitals,
-}: Props) {
-	const isSearching = search.trim().length > 0;
+const SearchResults = (props: Props) => {
+	const isSearching = props.search.trim().length > 0;
 
 	if (!isSearching) return null;
 
 	return (
 		<section className="flex flex-col gap-6">
-			<SectionHeading>Resultados para “{search}”</SectionHeading>
+			<SectionHeading>Resultados para “{props.search}”</SectionHeading>
 
-			{filteredDoctors.length > 0 && (
+			{props.filteredDoctors.length > 0 && (
 				<ResultsGrid
-					items={filteredDoctors}
+					items={props.filteredDoctors}
 					renderItem={(doctor) => (
 						<CardDoctor
 							key={doctor.id}
@@ -59,28 +38,28 @@ export default function SearchResults({
 				/>
 			)}
 
-			{filteredHospitals.length > 0 && (
+			{props.filteredHospitals.length > 0 && (
 				<ResultsGrid
-					items={filteredHospitals}
+					items={props.filteredHospitals}
 					renderItem={(hospital) => (
 						<CardHospital
 							key={hospital.id}
 							id={hospital.id}
 							name={hospital.name}
 							zone={hospital.zone ?? ""}
-							description={hospital.description}
+							description={hospital.description ?? ""}
 							specialists={hospital.specialists ?? 0}
 							services={hospital.services ?? []}
 							image={hospital.image ?? ""}
-							rating={4.8}
 						/>
 					)}
 				/>
 			)}
 
-			{filteredDoctors.length === 0 && filteredHospitals.length === 0 && (
-				<NoResults />
-			)}
+			{props.filteredDoctors.length === 0 &&
+				props.filteredHospitals.length === 0 && <NoResults />}
 		</section>
 	);
-}
+};
+
+export default SearchResults;

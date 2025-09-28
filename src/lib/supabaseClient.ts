@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 type SupabaseConfig = { URL: string; KEY: string };
 
-function supabaseClient() {
+const supabaseClient = () => {
 	const { VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY } = import.meta.env;
 
 	const SUPABASE: SupabaseConfig = {
@@ -14,6 +14,6 @@ function supabaseClient() {
 	}
 
 	return createClient(SUPABASE.URL, SUPABASE.KEY);
-}
+};
 
 export default supabaseClient();

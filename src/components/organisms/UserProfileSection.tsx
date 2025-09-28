@@ -1,29 +1,19 @@
 import { useNavigate } from "react-router";
-import type { Profile } from "../../context/session";
+
 import supabaseClient from "../../lib/supabaseClient";
 import { useCallback, useEffect, useState, useRef } from "react";
 import ProfileModal from "../atoms/ProfileModal";
 import EditProfileForm from "../molecules/EditProfileForm";
-import {
-	useForm,
-	FormProvider,
-	type FieldValues,
-	type SubmitHandler,
-} from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import CardHospital from "../molecules/CardHospital";
 import Loading from "../atoms/Loading";
 import Markdown from "react-markdown";
+import updateProfile from "../../utils/api/update/updateProfile";
+import fetchHospitalsByProfessional from "../../utils/api/get/fetchHospitalsByProfessional";
 
-interface Hospital {
-	id: string;
-	name: string;
-	zone: string;
-	description: string;
-	rating: number;
-	specialists: number;
-	services: string[];
-	image: string;
-}
+import type { Profile } from "../../types/profile";
+import type { Hospital } from "../../types/hospital";
+import type { FieldValues, SubmitHandler } from "react-hook-form";
 
 interface Props extends Profile {
 	mode?: "owner" | "viewer";
@@ -52,40 +42,13 @@ const UserProfileSection = (props: Props) => {
 		},
 	});
 
-	const handleEdit = () => {
-		if (modalRef.current) modalRef.current.showModal();
-	};
+	const handleEdit = () => modalRef.current?.showModal();
 
 	const handleProfileSubmit: SubmitHandler<FieldValues> = async (values) => {
 		try {
 			setIsLoading(true);
-
-			if (typeof values.services === "string") {
-				values.services = values.services
-					.split(",")
-					.map((s: string) => s.trim())
-					.filter((s: string) => s.length > 0);
-			}
-
-			await supabaseClient.auth.updateUser({ data: values });
-
-			await supabaseClient
-				.from("profiles")
-				.update({
-					name: values.name,
-					last_name: values.last_name,
-					phone: values.phone,
-					specialty: values.specialty,
-					services: values.services,
-					bio: values.bio,
-					avatar: values.avatar,
-				})
-				.eq("id", props.id);
-
-			setProfileData((prev) => ({
-				...prev,
-				...values,
-			}));
+			await updateProfile(props.id, values);
+			setProfileData((prev) => ({ ...prev, ...values }));
 		} catch (err) {
 			console.error("Error actualizando perfil:", err);
 		} finally {
@@ -103,45 +66,19 @@ const UserProfileSection = (props: Props) => {
 	}, [props]);
 
 	useEffect(() => {
-		const fetchHospitals = async () => {
-			try {
-				if (!isProfessional) return;
+		if (!isProfessional) return;
 
-				const professionalId = profileData.id;
-
-				const { data: rows, error } = await supabaseClient
-					.from("hospital_professionals")
-					.select(
-						"hospitals!hospital_professionals_hospital_id_fkey(*)"
-					)
-					.eq("profile_id", professionalId);
-
-				if (error) {
-					console.error("Error cargando hospitales:", error);
-					setHospitals([]);
-				} else {
-					const affHospitals: Hospital[] = rows
-						.map((r) => r.hospitals)
-						.flat()
-						.map((h: Hospital) => ({
-							id: h.id,
-							name: h.name,
-							zone: h.zone,
-							description: h.description,
-							rating: h.rating,
-							specialists: h.specialists,
-							services: h.services,
-							image: h.image,
-						}));
-
-					setHospitals(affHospitals);
-				}
-			} catch (error) {
-				console.error("Error cargando hospitales:", error);
+		fetchHospitalsByProfessional(profileData.id).then(
+			(fetchedHospitals) => {
+				setHospitals(
+					fetchedHospitals.map((h) => ({
+						...h,
+						rating: 4.8,
+						services: h.services ?? [],
+					}))
+				);
 			}
-		};
-
-		fetchHospitals();
+		);
 	}, [isProfessional, profileData.id]);
 
 	if (isLoading) {
@@ -345,7 +282,16 @@ const UserProfileSection = (props: Props) => {
 					</h3>
 					<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 						{hospitals.map((h) => (
-							<CardHospital key={h.id} {...h} />
+							<CardHospital
+								key={h.id}
+								id={h.id}
+								name={h.name}
+								zone={h.zone ?? ""}
+								description={h.description ?? ""}
+								specialists={h.specialists ?? 0}
+								services={h.services ?? []}
+								image={h.image ?? ""}
+							/>
 						))}
 					</div>
 				</div>

@@ -1,9 +1,6 @@
-interface Props {
-	address: string;
-	zone?: string;
-	phone: string;
-	email: string;
-}
+import type { Hospital } from "../../types/hospital";
+
+type Props = Pick<Hospital, "address" | "zone" | "phone" | "email">;
 
 const HospitalInfoGrid = (props: Props) => {
 	return (

@@ -1,13 +1,12 @@
-import type { Profile } from "../../context/session";
-
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import supabaseClient from "../../lib/supabaseClient";
 
 import Loading from "../atoms/Loading";
 import UserProfileSection from "../organisms/UserProfileSection";
+import type { Profile } from "../../types/profile";
 
-export default function ProfessionalProfile() {
+const ProfessionalProfile = () => {
 	const [profile, setProfile] = useState<Profile | null>();
 	const [loading, setLoading] = useState(true);
 
@@ -69,4 +68,6 @@ export default function ProfessionalProfile() {
 			</div>
 		</main>
 	);
-}
+};
+
+export default ProfessionalProfile;

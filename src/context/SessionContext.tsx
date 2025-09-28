@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import supabaseClient from "../lib/supabaseClient";
 import { SessionContext } from "./session";
-import type { Profile } from "./session";
+import type { Profile } from "../types/profile";
 
 interface Props {
 	children: React.ReactNode;
 }
 
-export const SessionProvider = ({ children }: Props) => {
+export const SessionProvider = (props: Props) => {
 	const [user, setUser] = useState<Profile | null>(null);
 	const [loading, setLoading] = useState(true);
 
@@ -58,7 +58,7 @@ export const SessionProvider = ({ children }: Props) => {
 
 	return (
 		<SessionContext.Provider value={{ user, loading }}>
-			{children}
+			{props.children}
 		</SessionContext.Provider>
 	);
 };

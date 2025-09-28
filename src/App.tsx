@@ -3,7 +3,7 @@ import "./styles/globals.css";
 import { RouterProvider } from "react-router";
 import { router } from "./routes/AppRoutes";
 import { SessionProvider } from "./context/SessionContext";
-import GitHubPagesRedirect from "./components/utils/GitHubPagesRedirect";
+import GitHubPagesRedirect from "./utils/GitHubPagesRedirect";
 
 const App = () => {
 	return (

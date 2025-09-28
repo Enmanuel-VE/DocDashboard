@@ -1,6 +1,6 @@
 import type { Dispatch, SetStateAction } from "react";
 import TabButton from "../atoms/TabButton";
-import type { Tab } from "../pages/HospitalPage";
+import type { Tab } from "../../types/tab";
 
 interface Props {
 	tabs: string[];

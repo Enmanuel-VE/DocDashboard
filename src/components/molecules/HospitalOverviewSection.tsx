@@ -1,9 +1,9 @@
 import Markdown from "react-markdown";
-import type { HospitalDetail } from "../organisms/HospitalTabsSection";
 import HospitalInfoGrid from "./HospitalInfoGrid";
+import type { Hospital } from "../../types/hospital";
 
 interface Props {
-	hospital: HospitalDetail;
+	hospital: Hospital;
 }
 
 const HospitalOverviewSection = (props: Props) => (

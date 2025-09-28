@@ -1,6 +1,9 @@
-import supabaseClient from "../../../../lib/supabaseClient";
+import supabaseClient from "../../../lib/supabaseClient";
+import type { Hospital } from "../../../types/hospital";
 
-const fetchHospitalById = async (hospitalId: string) => {
+const fetchHospitalById = async (
+	hospitalId: string
+): Promise<Hospital | null> => {
 	const { data, error } = await supabaseClient
 		.from("hospitals")
 		.select("*")

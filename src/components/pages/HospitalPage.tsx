@@ -3,61 +3,35 @@ import { useParams } from "react-router";
 import HospitalTemplate from "../templates/HospitalTemplate";
 import HospitalTabsSection from "../organisms/HospitalTabsSection";
 
-import fetchProfessionalsByHospital from "../utils/api/get/fetchProfessionalsByHospital";
-import fetchHospitalFaqs from "../utils/api/get/fetchHospitalFaqs";
-import fetchHospitalById from "../utils/api/get/fetchHospitalById";
+import fetchHospitalById from "../../utils/api/get/fetchHospitalById";
+import fetchProfessionalsByHospital from "../../utils/api/get/fetchProfessionalsByHospital";
+import fetchHospitalFaqs from "../../utils/api/get/fetchHospitalFaqs";
 
-const tabs = [
-	"Sobre el hospital",
-	"Profesionales",
-	"Preguntas frecuentes",
-] as const;
+import type { Hospital } from "../../types/hospital";
+import type { Doctor } from "../../types/profile";
+import type { PartialFAQ } from "../../types/faq";
+import { tabs, type Tab } from "../../types/tab";
 
-export type Tab = (typeof tabs)[number];
+interface HospitalPageProps {
+	hospital?: Hospital | null;
+}
 
-type HospitalDetail = {
-	id: string;
-	name: string;
-	description: string;
-	address: string;
-	zone?: string;
-	phone: string;
-	email: string;
-	map_embed?: string;
-};
-
-type Doctor = {
-	id: string;
-	name: string;
-	last_name: string;
-	specialty: string | null;
-	avatar: string | null;
-};
-
-type HospitalPageProps = {
-	hospital?: HospitalDetail | null;
-};
-
-export default function HospitalPage({
-	hospital: initialHospital,
-}: HospitalPageProps) {
+const HospitalPage = ({ hospital: initialHospital }: HospitalPageProps) => {
 	const { hospitalId } = useParams() as { hospitalId: string };
 	const [activeTab, setActiveTab] = useState<Tab>(tabs[0]);
 	const [search, setSearch] = useState<string>("");
-	const [hospital, setHospital] = useState<HospitalDetail | null>(
+	const [hospital, setHospital] = useState<Hospital | null>(
 		initialHospital ?? null
 	);
 	const [doctors, setDoctors] = useState<Doctor[]>([]);
 	const [loading, setLoading] = useState(!initialHospital);
-	const [faqs, setFaqs] = useState<{ question: string; answer: string }[]>(
-		[]
-	);
+	const [faqs, setFaqs] = useState<PartialFAQ[]>([]);
 
 	useEffect(() => {
 		setHospital(initialHospital ?? null);
 	}, [initialHospital]);
 
-	const hasFetched = useRef({
+	const hasFetched = useRef<Record<Tab, boolean>>({
 		[tabs[0]]: !!initialHospital,
 		[tabs[1]]: false,
 		[tabs[2]]: false,
@@ -76,6 +50,7 @@ export default function HospitalPage({
 							const hospitalData = await fetchHospitalById(
 								hospitalIdentifier
 							);
+
 							setHospital(hospitalData);
 						}
 						break;
@@ -84,18 +59,20 @@ export default function HospitalPage({
 						const doctorsData = await fetchProfessionalsByHospital(
 							hospitalIdentifier
 						);
+
 						setDoctors(doctorsData);
+
 						break;
 					}
 					case tabs[2]: {
 						const faqsData = await fetchHospitalFaqs(
 							hospitalIdentifier
 						);
+
 						setFaqs(faqsData);
+
 						break;
 					}
-					default:
-						break;
 				}
 				hasFetched.current[activeTab] = true;
 			} catch (error) {
@@ -128,7 +105,6 @@ export default function HospitalPage({
 	return (
 		<HospitalTabsSection
 			hospital={hospital}
-			doctors={doctors}
 			faqs={faqs}
 			activeTab={activeTab}
 			setActiveTab={setActiveTab}
@@ -139,4 +115,6 @@ export default function HospitalPage({
 			loading={loading}
 		/>
 	);
-}
+};
+
+export default HospitalPage;

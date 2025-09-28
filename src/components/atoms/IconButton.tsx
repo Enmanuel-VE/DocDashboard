@@ -6,12 +6,12 @@ type Props = {
 	className?: string;
 };
 
-function IconButton(props: Props) {
+const IconButton = (props: Props) => {
 	return (
 		<button onClick={props.onClick} className={`px-4 ${props.className}`}>
 			{props.active ? props.activeIcon : props.inactiveIcon}
 		</button>
 	);
-}
+};
 
 export default IconButton;
